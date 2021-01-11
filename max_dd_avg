@@ -1,3 +1,8 @@
+'# FX  MT5のバックテスト結果から、残高更新するまでの最大ドローダウンと全期間におけるその平均を表示するvba
+
+
+
+
 Dim Max_bal As Variant
 Dim DD As Variant
 Dim Max_DD As Variant
