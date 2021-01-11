@@ -1,0 +1,142 @@
+Dim Max_bal As Variant
+Dim DD As Variant
+Dim Max_DD As Variant
+Dim Max_DD_avg As Variant
+Dim sum_range As Variant
+Dim DD_count As Variant
+
+Dim First_row As Variant
+Dim Bal_col As Variant
+
+Dim Maxbal_col As Variant
+Dim MaxDD_col As Variant
+Dim MaxDD_ratio_col As Variant
+Dim MaxDDavg_col As Variant
+
+
+Sub max_test()
+
+    'Dim Max_bal_cur As Variant
+    
+    'データ対象の先頭行番号を取得
+    First_row = Range("A1:AZ10").Find("残高").Row + 1
+    
+    '残高の列番号を取得
+    Bal_col = Range("A1:AZ10").Find("残高").Column
+    
+    'Max_balの列番号を取得(行番号も変更された時を想定して余裕をもってA1:AZ3としている。）
+    
+    Maxbal_col = Range("A1:AZ10").Find("Max_bal").Column
+    
+    'Max_DDの列番号を取得
+    MaxDD_col = Range("A1:AZ10").Find("Max_DD").Column
+    
+    'Max_DD_ratioの列番号を取得
+    
+    MaxDD_ratio_col = Range("A1:AZ10").Find("Max_DD_ratio").Column
+    
+    'Max_DD_avgの列番号を取得
+    MaxDDavg_col = Range("A1:AZ10").Find("Max_DD_avg").Column
+    
+    Max_DD = 0
+    
+    '初期残高をMax_balに代入
+    Max_bal = Cells(First_row, Bal_col)
+    
+    'データ最終行の取得
+    last_row = Cells(Rows.Count, 1).End(xlUp).Row
+    
+    
+    For i = First_row To last_row
+              
+         'ドローダウン に ( ピーク残高 - 現在残高 ) を代入
+         DD = Max_bal - Cells(i, Bal_col)
+         
+         'Max_DDに"ドローダウン"と"maxドローダウン"を比較し、高い方を代入。残高更新後に0に初期化する。
+         Max_DD = Application.WorksheetFunction.Max(DD, Max_DD)
+              
+
+         '残高更新時の処理
+         
+         If Cells(i, Bal_col) > Application.WorksheetFunction.Max(Range(Cells(First_row, Bal_col), Cells(i - 1, Bal_col))) Then
+         
+    
+         'i行目、Maxbal_col列 のセルに現在残高を代入
+         Cells(i, Maxbal_col) = Cells(i, Bal_col)
+         
+         
+         Cells(i, MaxDD_col) = Max_DD
+         
+         
+         'If Max_DD <> 0 And Max_bal <> 0 Then
+         Max_DD_ratio = Max_DD / Max_bal
+         
+         Cells(i, MaxDD_ratio_col) = Max_DD_ratio
+                 
+         
+         'MaxDD_ratioの合計範囲を定義。データ開始行から、現在参照しているMaxDD_ratioセルの１つ上までを範囲指定。
+         Set MyRng = Range(Cells(First_row, MaxDD_ratio_col), Cells(i, MaxDD_ratio_col))
+         
+         '値の個数取得
+         DD_count = Application.WorksheetFunction.Count(MyRng)
+         
+         '合計÷個数
+         Max_DD_avg = Application.WorksheetFunction.Sum(MyRng) / DD_count
+         
+         Cells(i, MaxDDavg_col) = Max_DD_avg
+         
+         'End If
+         
+         
+         'Max_DDを初期化
+         Max_DD = 0
+         'Max_balを更新
+         Max_bal = Cells(i, Bal_col)
+         
+         
+         
+         
+         End If
+         
+         '最終行の処理（残高更新をしないが、DD計算
+         
+         If i = last_row Then
+         
+         Cells(i, Maxbal_col) = Max_bal
+         Cells(i, MaxDD_col) = Max_DD
+         
+         Max_DD_ratio = Max_DD / Max_bal
+         Cells(i, MaxDD_ratio_col) = Max_DD_ratio
+         
+         
+         
+         Set MyRng = Range(Cells(First_row, MaxDD_ratio_col), Cells(i, MaxDD_ratio_col))
+         
+         DD_count = Application.WorksheetFunction.Count(MyRng)
+         
+         Max_DD_avg = Application.WorksheetFunction.Sum(MyRng) / DD_count
+         
+         Cells(i, MaxDDavg_col) = Max_DD_avg
+         
+         
+         
+         
+         End If
+         
+
+         
+    Next i
+
+End Sub
+
+
+Sub reset()
+
+'Range("O" & 3 & ":O" & 500).Clear
+Range(Cells(First_row, Maxbal_col), Cells(5000, Maxbal_col)).Clear
+Range(Cells(First_row, MaxDD_col), Cells(5000, MaxDD_col)).Clear
+Range(Cells(First_row, MaxDD_ratio_col), Cells(5000, MaxDD_ratio_col)).Clear
+Range(Cells(First_row, MaxDDavg_col), Cells(5000, MaxDDavg_col)).Clear
+
+
+End Sub
