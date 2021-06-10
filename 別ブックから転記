@@ -1,0 +1,100 @@
+### 
+Sub test()
+
+
+
+Dim barad As Integer
+Dim wb, wb2 As Workbook
+Dim mainsh, mainsh2 As Worksheet
+
+Set wb = ThisWorkbook
+Set wb2 = Workbooks.Open("sub.xlsx")
+
+Set mainsh = ThisWorkbook.Worksheets("Sheet1")
+Set subsh = Workbooks("sub.xlsx").Worksheets("Sheet1")
+
+mainlastrow = mainsh.Cells(Rows.Count, 1).End(xlUp).Row
+sublastrow = subsh.Cells(Rows.Count, 1).End(xlUp).Row
+
+'brand = ActiveCell.Value
+brand = mainsh.Cells(mainlastrow, 1).Value
+
+Debug.Print (Str(brand) & ".T")
+
+
+'取得先列番号
+
+a_subcol = subsh.Range("A1:AZ1").Find("a", LookAt:=xlWhole).Column
+b_subcol = subsh.Range("A1:AZ1").Find("b", LookAt:=xlWhole).Column
+c_subcol = subsh.Range("A1:AZ1").Find("c", LookAt:=xlWhole).Column
+e_subcol = subsh.Range("A1:AZ1").Find("e", LookAt:=xlWhole).Column
+
+'転記先列番号
+
+a_maincol = mainsh.Range("A2:AZ2").Find("symbol(a)", LookAt:=xlWhole).Column
+b_maincol = mainsh.Range("A2:AZ2").Find("b", LookAt:=xlWhole).Column
+c_maincol = mainsh.Range("A2:AZ2").Find("c", LookAt:=xlWhole).Column
+d_maincol = mainsh.Range("A2:AZ2").Find("d", LookAt:=xlWhole).Column
+e_maincol = mainsh.Range("A2:AZ2").Find("e", LookAt:=xlWhole).Column
+
+
+brand_col = subsh.Range("A1:AZ1").Find("d", LookAt:=xlWhole).Column
+
+
+
+Select Case brand
+
+    '銘柄が5401の場合
+    Case 5401
+    
+        For i = 2 To sublastrow
+
+            If subsh.Cells(i, brand_col).Value = Trim(Str(brand)) & ".T" Then
+            
+                mainlastrow = mainlastrow + 1
+    
+                mainsh.Cells(mainlastrow, a_maincol).Value = subsh.Cells(i, a_subcol)
+                
+                mainsh.Cells(mainlastrow, b_maincol).Value = subsh.Cells(i, b_subcol)
+                
+                mainsh.Cells(mainlastrow, c_maincol).Value = subsh.Cells(i, c_subcol)
+                
+                mainsh.Cells(mainlastrow, e_maincol).Value = subsh.Cells(i, e_subcol)
+                
+                
+            
+            End If
+        
+        Next i
+    
+    '銘柄が5402の場合
+    Case 5402
+    
+    
+            For i = 2 To sublastrow
+
+                If subsh.Cells(i, brand_col).Value = Trim(Str(brand)) & ".T" Then
+                
+                    mainlastrow = mainlastrow + 1
+        
+                    mainsh.Cells(mainlastrow, a_maincol).Value = subsh.Cells(i, a_subcol)
+                    
+                    mainsh.Cells(mainlastrow, b_maincol).Value = subsh.Cells(i, b_subcol)
+                    
+                    'mainsh.Cells(mainlastrow, c_maincol).Value = subsh.Cells(i, c_subcol)
+                    
+                    mainsh.Cells(mainlastrow, e_maincol).Value = subsh.Cells(i, e_subcol)
+                    
+                    
+                
+                End If
+        
+            Next i
+    
+    End Select
+
+
+wb.Sheets("Sheet1").Activate
+
+
+End Sub
